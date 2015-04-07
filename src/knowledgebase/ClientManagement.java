@@ -81,12 +81,28 @@ public class ClientManagement {
 		return conn;
 	}
 	
+	public static ResultSet query(String sparql) {
+		ResultSet rs = null;
+		try {
+			getAgModel();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//TODO
+		AGQuery query = AGQueryFactory.create(sparql);
+		QueryExecution qe = AGQueryExecutionFactory.create(query, model);
+		rs = qe.execSelect();
+		return rs;
+	}
+	
 	public static void clearAll() {
 		closeAllConnections();
 		ClientManagement.model.close();
 	}
 	
 	public static void main(String[] args) throws Exception {
+		ResultSet results;
+		
 		AGModel model = ClientManagement.getAgModel();
 		
 		try {
@@ -95,19 +111,26 @@ public class ClientManagement {
 			AGQuery sparql = AGQueryFactory.create(queryString);
 			QueryExecution qe = AGQueryExecutionFactory.create(sparql, model);
 			try {
-				ResultSet results = qe.execSelect();
-				while (results.hasNext()) {
-					QuerySolution result = results.next();
-					RDFNode s = result.get("s");
-					RDFNode p = result.get("p");
-					// System.out.format("%s %s %s\n", s, p, o);
-					System.out.println(s + "\t" + p);
-				}
+				results = qe.execSelect();
+//				while (results.hasNext()) {
+//					QuerySolution result = results.next();
+//					RDFNode s = result.get("s");
+//					RDFNode p = result.get("p");
+//					// System.out.format("%s %s %s\n", s, p, o);
+//					System.out.println(s + "\t" + p);
+//				}
 			} finally {
 				qe.close();
 			}
 		} finally {
 			model.close();
+		}
+		
+		//test print after close
+		while(results.hasNext()) {
+			QuerySolution result = results.next();
+			RDFNode s = result.get("s");
+			System.out.println(s);
 		}
 		
 	}
