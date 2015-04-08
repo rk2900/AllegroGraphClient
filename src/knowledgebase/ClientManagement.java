@@ -1,8 +1,6 @@
 package knowledgebase;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.franz.agraph.jena.AGGraph;
 import com.franz.agraph.jena.AGGraphMaker;
@@ -23,7 +21,7 @@ public class ClientManagement {
 	public static final String SERVER_URL = "http://172.16.2.21:10035";
 	public static final String CATALOG_ID = "dbpedia2014";
 	public static final String REPOSITORY_ID = "dbpedia";
-	public static final String USERNAME = "super";
+	public static final String USERNAME = "dbpedia";
 	public static final String PASSWORD = "apex";
 	public static final String TEMPORARY_DIRECTORY = "";
 	
@@ -81,14 +79,16 @@ public class ClientManagement {
 		return conn;
 	}
 	
-	public static ResultSet query(String sparql) {
+	public static ResultSet query(String sparql, boolean visible) {
 		ResultSet rs = null;
 		try {
 			getAgModel();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//TODO
+		if (visible) {
+			System.out.println("\t-"+sparql);
+		}
 		AGQuery query = AGQueryFactory.create(sparql);
 		QueryExecution qe = AGQueryExecutionFactory.create(query, model);
 		rs = qe.execSelect();
