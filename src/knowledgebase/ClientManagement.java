@@ -53,6 +53,11 @@ public class ClientManagement {
 		}
 	}
 	
+	/**
+	 * To get AGraph model structure
+	 * @return
+	 * @throws Exception
+	 */
 	public static AGModel getAgModel() throws Exception{
 		if(ClientManagement.model == null) {
 			AGServer server = new AGServer(SERVER_URL, USERNAME, PASSWORD);
@@ -79,6 +84,12 @@ public class ClientManagement {
 		return conn;
 	}
 	
+	/**
+	 * To execute a specific query.
+	 * @param sparql
+	 * @param visible whether print out real SPARQL query string
+	 * @return
+	 */
 	public static ResultSet query(String sparql, boolean visible) {
 		ResultSet rs = null;
 		try {
