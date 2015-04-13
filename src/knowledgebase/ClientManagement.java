@@ -74,7 +74,7 @@ public class ClientManagement {
 		return model;
 	}
 	
-	public AGRepositoryConnection getConnection() {
+	public static AGRepositoryConnection getConnection() {
 		AGRepositoryConnection conn = null;
 		if(!toCloseConnection.isEmpty()) {
 			return toCloseConnection.getLast();
@@ -144,6 +144,40 @@ public class ClientManagement {
 			System.out.println(s);
 		}
 		
+	}
+
+	public static LinkedList<RDFNode> getSurroundingPred(String entityUri) {
+		LinkedList<RDFNode> predList = new LinkedList<>();
+		
+		// Forward
+		// Backward
+		String fSPO = "<"+entityUri+">" + " ?p ?o.";
+		String bSPO = "?s ?p " + "<"+entityUri+">";
+		
+		String sparql = "SELECT DISTINCT ?p WHERE { "
+				+"{" +fSPO+ "} UNION {" +bSPO+ "}"
+						+ "}";
+		ResultSet rs = ClientManagement.query(sparql, false);
+		while(rs.hasNext()) {
+			RDFNode p = rs.next().get("p");
+			predList.add(p);
+		}
+		
+		return predList;
+	}
+
+	public static LinkedList<String> getLabel(String uri) {
+		LinkedList<String> labels = new LinkedList<>();
+		String sparql = "SELECT ?o WHERE { "
+				+ "<" +uri+">" + " rdfs:label ?o."
+						+ "}";
+		ResultSet rs = ClientManagement.query(sparql, false);
+		while (rs.hasNext()) {
+			RDFNode label = rs.next().get("o");
+			labels.add(label.asLiteral().getString());
+		}
+		//TODO should enrich more labels
+		return labels;
 	}
 
 }

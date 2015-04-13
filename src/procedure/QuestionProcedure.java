@@ -20,7 +20,7 @@ public class QuestionProcedure {
 	
 	private void questionSpliter() {
 		LinkedList<String> questions = FileOps.LoadFilebyLine(questionFile);
-		LinkedList<String> questionsSplitted = FileOps.LoadFilebyLine(questionFile);
+		LinkedList<String> questionsSplit = FileOps.LoadFilebyLine(questionFile);
 		LinkedList<String> questionsMarked = FileOps.LoadFilebyLine(markedEntityFile);
 		
 		int count = 0;
@@ -34,11 +34,11 @@ public class QuestionProcedure {
 			int beginOffset = Integer.parseInt(qmItems[1]);
 			int endOffset = Integer.parseInt(qmItems[2]);
 			String question = questions.get(qId-1);
-			String questionSplitted = question.substring(0, beginOffset)+question.substring(endOffset+1, question.length());
-			questionsSplitted.remove(qId-1);
-			questionsSplitted.add(qId-1, questionSplitted);
+			String questionSplit = question.substring(0, beginOffset)+question.substring(endOffset+1, question.length());
+			questionsSplit.remove(qId-1);
+			questionsSplit.add(qId-1, questionSplit);
 		}
-		FileOps.SaveList("./data/questions_splitted.txt", questionsSplitted);
+		FileOps.SaveList("./data/questions_splitted.txt", questionsSplit);
 	}
 	
 	public static void main(String[] args) {
