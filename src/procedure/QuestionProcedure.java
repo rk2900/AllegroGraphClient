@@ -1,10 +1,7 @@
 package procedure;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 import basic.FileOps;
 
@@ -23,7 +20,6 @@ public class QuestionProcedure {
 		LinkedList<String> questionsSplit = FileOps.LoadFilebyLine(questionFile);
 		LinkedList<String> questionsMarked = FileOps.LoadFilebyLine(markedEntityFile);
 		
-		int count = 0;
 //		Iterator<String> qIterator = questions.iterator();
 		Iterator<String> qmIterator = questionsMarked.iterator();
 		
