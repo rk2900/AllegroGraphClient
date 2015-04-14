@@ -20,7 +20,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 public class ClientManagement {
 	public static final String SERVER_URL = "http://172.16.2.21:10035";
 	public static final String CATALOG_ID = "dbpedia2014";
-	public static final String REPOSITORY_ID = "dbpedia";
+	public static final String REPOSITORY_ID = "dbpedia_full";
 	public static final String USERNAME = "dbpedia";
 	public static final String PASSWORD = "apex";
 	public static final String TEMPORARY_DIRECTORY = "";
@@ -98,7 +98,7 @@ public class ClientManagement {
 			e.printStackTrace();
 		}
 		if (visible) {
-			System.out.println("\t-"+sparql);
+			System.err.println("\t-"+sparql);
 		}
 		AGQuery query = AGQueryFactory.create(sparql);
 		QueryExecution qe = AGQueryExecutionFactory.create(query, model);
@@ -112,37 +112,20 @@ public class ClientManagement {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		ResultSet results;
+//		ResultSet results;
+//		
+//		String sparql = "";
+//		results = ClientManagement.query(sparql, false);
+//		//test print after close
+//		while(results.hasNext()) {
+//			QuerySolution result = results.next();
+//			RDFNode s = result.get("s");
+//			System.out.println(s);
+//		}
 		
-		AGModel model = ClientManagement.getAgModel();
-		
-		try {
-			String queryString = "SELECT ?s ?p  WHERE {"
-					+ "?s ?p <http://en.wikipedia.org/wiki/Netherlands>.} LIMIT 10";
-			AGQuery sparql = AGQueryFactory.create(queryString);
-			QueryExecution qe = AGQueryExecutionFactory.create(sparql, model);
-			try {
-				results = qe.execSelect();
-//				while (results.hasNext()) {
-//					QuerySolution result = results.next();
-//					RDFNode s = result.get("s");
-//					RDFNode p = result.get("p");
-//					// System.out.format("%s %s %s\n", s, p, o);
-//					System.out.println(s + "\t" + p);
-//				}
-			} finally {
-				qe.close();
-			}
-		} finally {
-			model.close();
-		}
-		
-		//test print after close
-		while(results.hasNext()) {
-			QuerySolution result = results.next();
-			RDFNode s = result.get("s");
-			System.out.println(s);
-		}
+		String uri = "http://dbpedia.org/resource/China";
+		LinkedList<String> labels = getLabel(uri);
+		System.out.println(labels);
 		
 	}
 
@@ -168,15 +151,15 @@ public class ClientManagement {
 
 	public static LinkedList<String> getLabel(String uri) {
 		LinkedList<String> labels = new LinkedList<>();
-		String sparql = "SELECT ?o WHERE { "
-				+ "<" +uri+">" + " rdfs:label ?o."
+		String sparql = "SELECT ?label WHERE { "
+				+ "<" +uri+">" + " rdfs:label ?label ."
+						+ "FILTER(LANGMATCHES(LANG(?label), \"en\"))"
 						+ "}";
-		ResultSet rs = ClientManagement.query(sparql, false);
+		ResultSet rs = ClientManagement.query(sparql, true);
 		while (rs.hasNext()) {
-			RDFNode label = rs.next().get("o");
+			RDFNode label = rs.next().get("label");
 			labels.add(label.asLiteral().getString());
 		}
-		//TODO should enrich more labels
 		return labels;
 	}
 
