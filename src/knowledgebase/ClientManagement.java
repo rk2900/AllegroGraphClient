@@ -155,7 +155,7 @@ public class ClientManagement {
 				+ "<" +uri+">" + " rdfs:label ?label ."
 						+ "FILTER(LANGMATCHES(LANG(?label), \"en\"))"
 						+ "}";
-		ResultSet rs = ClientManagement.query(sparql, true);
+		ResultSet rs = ClientManagement.query(sparql, false);
 		while (rs.hasNext()) {
 			RDFNode label = rs.next().get("label");
 			labels.add(label.asLiteral().getString());
