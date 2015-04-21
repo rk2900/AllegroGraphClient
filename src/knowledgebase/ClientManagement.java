@@ -2,6 +2,8 @@ package knowledgebase;
 
 import java.util.LinkedList;
 
+import org.apache.log4j.lf5.viewer.TrackingAdjustmentListener;
+
 import com.franz.agraph.jena.AGGraph;
 import com.franz.agraph.jena.AGGraphMaker;
 import com.franz.agraph.jena.AGModel;
@@ -123,16 +125,19 @@ public class ClientManagement {
 //		}
 		
 		String uri = "http://dbpedia.org/resource/China";
-		LinkedList<String> labels = getLabel(uri);
-		System.out.println(labels);
+//		LinkedList<String> labels = getLabel(uri);
+//		System.out.println(labels);
+		
+		String pred = "http://xmlns.com/foaf/0.1/isPrimaryTopicOf";
+		LinkedList<String> nodes = getNode(uri, pred);
+		System.out.println(nodes);
 		
 	}
 
 	public static LinkedList<RDFNode> getSurroundingPred(String entityUri) {
 		LinkedList<RDFNode> predList = new LinkedList<>();
 		
-		// Forward
-		// Backward
+		// Forward & Backward
 		String fSPO = "<"+entityUri+">" + " ?p ?o.";
 		String bSPO = "?s ?p " + "<"+entityUri+">";
 		
@@ -160,6 +165,21 @@ public class ClientManagement {
 			labels.add(label.asLiteral().getString());
 		}
 		return labels;
+	}
+	
+	public static LinkedList<String> getNode(String node, String predicate) {
+		LinkedList<String> nodes = new LinkedList<>();
+		String query = "SELECT ?node WHERE { "
+				+ "{<" + node + "> " + "<" + predicate + "> " +"?node."
+						+ "} UNION {"
+						+ "?node " + "<" + predicate + "> <" + node + "> ."
+						+ "}" + "}";
+		ResultSet rs = ClientManagement.query(query, true);
+		while(rs.hasNext()) {
+			RDFNode rdfNode = rs.next().get("node");
+			nodes.add(rdfNode.toString());
+		}
+		return nodes;
 	}
 
 }
