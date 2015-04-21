@@ -2,8 +2,6 @@ package knowledgebase;
 
 import java.util.LinkedList;
 
-import org.apache.log4j.lf5.viewer.TrackingAdjustmentListener;
-
 import com.franz.agraph.jena.AGGraph;
 import com.franz.agraph.jena.AGGraphMaker;
 import com.franz.agraph.jena.AGModel;
