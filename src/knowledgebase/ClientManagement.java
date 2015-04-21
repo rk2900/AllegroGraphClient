@@ -111,24 +111,15 @@ public class ClientManagement {
 	}
 	
 	public static void main(String[] args) throws Exception {
-//		ResultSet results;
-//		
-//		String sparql = "";
-//		results = ClientManagement.query(sparql, false);
-//		//test print after close
-//		while(results.hasNext()) {
-//			QuerySolution result = results.next();
-//			RDFNode s = result.get("s");
-//			System.out.println(s);
-//		}
+		ResultSet results;
 		
-		String uri = "http://dbpedia.org/resource/China";
-//		LinkedList<String> labels = getLabel(uri);
-//		System.out.println(labels);
-		
-		String pred = "http://xmlns.com/foaf/0.1/isPrimaryTopicOf";
-		LinkedList<String> nodes = getNode(uri, pred);
-		System.out.println(nodes);
+		String sparql = "SELECT ?node WHERE { {<http://dbpedia.org/resource/John_F._Kennedy> <http://dbpedia.org/property/president> ?node.} UNION {?node <http://dbpedia.org/property/president> <http://dbpedia.org/resource/John_F._Kennedy> .}}";
+		results = ClientManagement.query(sparql, false);
+		//test print after close
+		while(results.hasNext()) {
+			RDFNode s = results.next().get("node");
+			System.out.println(s);
+		}
 		
 	}
 
@@ -165,8 +156,8 @@ public class ClientManagement {
 		return labels;
 	}
 	
-	public static LinkedList<String> getNode(String node, String predicate) {
-		LinkedList<String> nodes = new LinkedList<>();
+	public static LinkedList<RDFNode> getNode(String node, String predicate) {
+		LinkedList<RDFNode> nodes = new LinkedList<>();
 		String query = "SELECT ?node WHERE { "
 				+ "{<" + node + "> " + "<" + predicate + "> " +"?node."
 						+ "} UNION {"
@@ -175,7 +166,7 @@ public class ClientManagement {
 		ResultSet rs = ClientManagement.query(query, true);
 		while(rs.hasNext()) {
 			RDFNode rdfNode = rs.next().get("node");
-			nodes.add(rdfNode.toString());
+			nodes.add(rdfNode);
 		}
 		return nodes;
 	}
