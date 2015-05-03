@@ -6,6 +6,7 @@ import com.franz.agraph.jena.AGGraph;
 import com.franz.agraph.jena.AGGraphMaker;
 import com.franz.agraph.jena.AGModel;
 import com.franz.agraph.jena.AGQuery;
+import com.franz.agraph.jena.AGQueryExecution;
 import com.franz.agraph.jena.AGQueryExecutionFactory;
 import com.franz.agraph.jena.AGQueryFactory;
 import com.franz.agraph.repository.AGCatalog;
@@ -105,22 +106,34 @@ public class ClientManagement {
 		return rs;
 	}
 	
+	/**
+	 * To ask if some triple exists 
+	 * @param sparql ASK query
+	 * @param visible
+	 * @return whether exist
+	 */
+	public static boolean ask(String sparql, boolean visible) {
+		AGQuery query = AGQueryFactory.create(sparql);
+		boolean flag = false;
+		try {
+			AGQueryExecution qe = AGQueryExecutionFactory.create(query, getAgModel());
+			flag = qe.execAsk();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
+	
 	public static void clearAll() {
 		closeAllConnections();
 		ClientManagement.model.close();
 	}
 	
 	public static void main(String[] args) throws Exception {
-		ResultSet results;
-		
-		String sparql = "SELECT ?node WHERE { {<http://dbpedia.org/resource/John_F._Kennedy> <http://dbpedia.org/property/president> ?node.} UNION {?node <http://dbpedia.org/property/president> <http://dbpedia.org/resource/John_F._Kennedy> .}}";
-		results = ClientManagement.query(sparql, false);
-		//test print after close
-		while(results.hasNext()) {
-			RDFNode s = results.next().get("node");
-			System.out.println(s);
-		}
-		
+		String n = "http://dbpedia.org/resource/John_F._Kennedy";
+		String p = "http://dbpedia.org/property/president";
+//		String ask = "ASK WHERE { ?s <http://dbpedia.org/property/president> <http://dbpedia.org/resource/John_F._Kennedy>}";
+		System.out.println(ClientManagement.getDirection(n, p));
 	}
 
 	public static LinkedList<RDFNode> getSurroundingPred(String entityUri) {
@@ -141,7 +154,34 @@ public class ClientManagement {
 		
 		return predList;
 	}
+	
+	/**
+	 * To get the direction of the node and predicate
+	 * @param nodeUri
+	 * @param predUri
+	 * @return -1: do not exist; 0: outward; 1: inward; 2: bidirectional 
+	 */
+	public static int getDirection(String nodeUri, String predUri) {
+		String fSPO = "<"+nodeUri+">" + " <"+predUri+"> ?o.";
+		String bSPO = "?s <"+predUri+"> " + "<"+nodeUri+">";
+		
+		int directionType = -1;
+		String outSparql = "ASK WHERE { " +fSPO + "}";
+		String inSparql = "ASK WHERE {"+bSPO+"}";
+		if(ClientManagement.ask(outSparql, false)) {
+			directionType++;
+		}
+		if(ClientManagement.ask(inSparql, false)) {
+			directionType+=2;
+		}
+		return directionType;
+	}
 
+	/**
+	 * To get the label of given URI in English
+	 * @param uri
+	 * @return
+	 */
 	public static LinkedList<String> getLabel(String uri) {
 		LinkedList<String> labels = new LinkedList<>();
 		String sparql = "SELECT ?label WHERE { "
@@ -170,5 +210,5 @@ public class ClientManagement {
 		}
 		return nodes;
 	}
-
+	
 }
