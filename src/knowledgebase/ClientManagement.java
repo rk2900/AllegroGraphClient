@@ -18,7 +18,7 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class ClientManagement {
-	public static final String SERVER_URL = "http://172.16.2.21:10035";
+	public static final String SERVER_URL = "http://agraph.apexlab.org";
 	public static final String CATALOG_ID = "dbpedia2014";
 	public static final String REPOSITORY_ID = "dbpedia_full";
 	public static final String USERNAME = "dbpedia";
