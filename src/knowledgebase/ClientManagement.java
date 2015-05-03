@@ -129,13 +129,6 @@ public class ClientManagement {
 		ClientManagement.model.close();
 	}
 	
-	public static void main(String[] args) throws Exception {
-		String n = "http://dbpedia.org/resource/John_F._Kennedy";
-		String p = "http://dbpedia.org/property/president";
-//		String ask = "ASK WHERE { ?s <http://dbpedia.org/property/president> <http://dbpedia.org/resource/John_F._Kennedy>}";
-		System.out.println(ClientManagement.getDirection(n, p));
-	}
-
 	public static LinkedList<RDFNode> getSurroundingPred(String entityUri) {
 		LinkedList<RDFNode> predList = new LinkedList<>();
 		
@@ -196,6 +189,16 @@ public class ClientManagement {
 		return labels;
 	}
 	
+	public static LinkedList<String> getLabel(RDFNode node) {
+		return getLabel(node.toString());
+	}
+	
+	/**
+	 * To get the other node of given predicate with regard to one node
+	 * @param node
+	 * @param predicate
+	 * @return
+	 */
 	public static LinkedList<RDFNode> getNode(String node, String predicate) {
 		LinkedList<RDFNode> nodes = new LinkedList<>();
 		String query = "SELECT ?node WHERE { "
@@ -211,4 +214,43 @@ public class ClientManagement {
 		return nodes;
 	}
 	
+	/**
+	 * To get the domain of given predicate
+	 * @param predicate
+	 * @return null if the predicate does not have domains 
+	 */
+	public static RDFNode getDomain(String predicate) {
+		RDFNode domain = null;
+		String query = "SELECT ?domain WHERE { "
+				+ "<" + predicate +"> rdfs:domain ?domain."
+						+ "}";
+		ResultSet rs = ClientManagement.query(query, true);
+		if(rs.hasNext()) {
+			domain = rs.next().get("domain");
+		}
+		return domain;
+	}
+	
+	/**
+	 * To get range of given predicate
+	 * @param predicate
+	 * @return null if the predicate does not have ranges
+	 */
+	public static RDFNode getRange(String predicate) {
+		RDFNode range = null;
+		String query = "SELECT ?range WHERE { "
+				+ "<" + predicate +"> rdfs:range ?range."
+						+ "}";
+		ResultSet rs = ClientManagement.query(query, true);
+		if(rs.hasNext()) {
+			range = rs.next().get("range");
+		}
+		return range;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		String p = "http://dbpedia.org/ontology/award";
+//		String ask = "ASK WHERE { ?s <http://dbpedia.org/property/president> <http://dbpedia.org/resource/John_F._Kennedy>}";
+		System.out.println(ClientManagement.getLabel(ClientManagement.getRange(p)));
+	}
 }
