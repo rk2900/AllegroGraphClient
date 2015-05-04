@@ -206,7 +206,7 @@ public class ClientManagement {
 						+ "} UNION {"
 						+ "?node " + "<" + predicate + "> <" + node + "> ."
 						+ "}" + "}";
-		ResultSet rs = ClientManagement.query(query, true);
+		ResultSet rs = ClientManagement.query(query, false);
 		while(rs.hasNext()) {
 			RDFNode rdfNode = rs.next().get("node");
 			nodes.add(rdfNode);
@@ -224,7 +224,7 @@ public class ClientManagement {
 		String query = "SELECT ?domain WHERE { "
 				+ "<" + predicate +"> rdfs:domain ?domain."
 						+ "}";
-		ResultSet rs = ClientManagement.query(query, true);
+		ResultSet rs = ClientManagement.query(query, false);
 		if(rs.hasNext()) {
 			domain = rs.next().get("domain");
 		}
@@ -241,11 +241,30 @@ public class ClientManagement {
 		String query = "SELECT ?range WHERE { "
 				+ "<" + predicate +"> rdfs:range ?range."
 						+ "}";
-		ResultSet rs = ClientManagement.query(query, true);
+		ResultSet rs = ClientManagement.query(query, false);
 		if(rs.hasNext()) {
 			range = rs.next().get("range");
 		}
 		return range;
+	}
+	
+	/**
+	 * To get the cross path node
+	 * @param leftNode
+	 * @param rightNode
+	 * @return node list
+	 */
+	public static LinkedList<RDFNode> getCrossNode(String leftNode, String rightNode) {
+		LinkedList<RDFNode> nodeList = new LinkedList<>();
+		String query = "SELECT ?node WHERE { "
+				+ "<"+leftNode+"> ?p1 ?node. "
+				+ "<"+rightNode+"> ?p2 ?node. }";
+		ResultSet rs = ClientManagement.query(query, false);
+		while(rs.hasNext()) {
+			RDFNode node = rs.next().get("node");
+			nodeList.add(node);
+		}
+		return nodeList;
 	}
 	
 	public static void main(String[] args) throws Exception {
