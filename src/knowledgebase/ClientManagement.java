@@ -114,6 +114,8 @@ public class ClientManagement {
 	 */
 	public static boolean ask(String sparql, boolean visible) {
 		AGQuery query = AGQueryFactory.create(sparql);
+		if(visible)
+			System.err.println(sparql);
 		boolean flag = false;
 		try {
 			AGQueryExecution qe = AGQueryExecutionFactory.create(query, getAgModel());
@@ -297,7 +299,7 @@ public class ClientManagement {
 				+"{" +fSPO+ "} UNION {" +bSPO+ "}"
 						+ "?o rdf:type dbo:Place."
 						+ "}";
-		ResultSet rs = ClientManagement.query(sparql, true);
+		ResultSet rs = ClientManagement.query(sparql, false);
 		while(rs.hasNext()) {
 			RDFNode p = rs.next().get("p");
 			predList.add(p);
@@ -315,7 +317,7 @@ public class ClientManagement {
 						+fSPO
 						+ "FILTER(isLiteral(?o))"
 						+ "}";
-		ResultSet rs = ClientManagement.query(sparql, true);
+		ResultSet rs = ClientManagement.query(sparql, false);
 		while(rs.hasNext()) {
 			RDFNode p = rs.next().get("p");
 			predList.add(p);
@@ -323,9 +325,34 @@ public class ClientManagement {
 		return predList;
 	}
 	
+	/**
+	 * To get predicates with specified type URI
+	 * @param entityUri
+	 * @param typeUri
+	 * @return
+	 */
+	public static LinkedList<RDFNode> getPredicateType(String entityUri, String typeUri) {
+		LinkedList<RDFNode> predList = new LinkedList<>();
+		
+		// Forward & Backward
+		String fSPO = "<"+entityUri+">" + " ?p ?o.";
+		String bSPO = "?o ?p " + "<"+entityUri+">";
+		
+		String sparql = "SELECT DISTINCT ?p WHERE { "
+				+"{" +fSPO+ "} UNION {" +bSPO+ "}"
+						+ "?o rdf:type <"+typeUri+">."
+						+ "}";
+		ResultSet rs = ClientManagement.query(sparql, true);
+		while(rs.hasNext()) {
+			RDFNode p = rs.next().get("p");
+			predList.add(p);
+		}
+		
+		
+		return predList;
+	}
+	
 	public static void main(String[] args) throws Exception {
-		String p = "http://dbpedia.org/resource/Hells_Angels";
-//		String ask = "ASK WHERE { ?s <http://dbpedia.org/property/president> <http://dbpedia.org/resource/John_F._Kennedy>}";
-		System.out.println(ClientManagement.getPredicateDate(p.toString()));
+		
 	}
 }
