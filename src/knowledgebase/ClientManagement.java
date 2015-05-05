@@ -313,7 +313,7 @@ public class ClientManagement {
 		
 		String sparql = "SELECT DISTINCT ?p WHERE { "
 						+fSPO
-						+ "FILTER(datatype(?o) = xsd:date)"
+						+ "FILTER(isLiteral(?o))"
 						+ "}";
 		ResultSet rs = ClientManagement.query(sparql, true);
 		while(rs.hasNext()) {
