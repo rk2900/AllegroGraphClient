@@ -201,7 +201,7 @@ public class ClientManagement {
 	 */
 	public static LinkedList<RDFNode> getNode(String node, String predicate) {
 		LinkedList<RDFNode> nodes = new LinkedList<>();
-		String query = "SELECT ?node WHERE { "
+		String query = "SELECT DISTINCT ?node WHERE { "
 				+ "{<" + node + "> " + "<" + predicate + "> " +"?node."
 						+ "} UNION {"
 						+ "?node " + "<" + predicate + "> <" + node + "> ."
@@ -297,7 +297,7 @@ public class ClientManagement {
 				+"{" +fSPO+ "} UNION {" +bSPO+ "}"
 						+ "?o rdf:type dbo:Place."
 						+ "}";
-		ResultSet rs = ClientManagement.query(sparql, false);
+		ResultSet rs = ClientManagement.query(sparql, true);
 		while(rs.hasNext()) {
 			RDFNode p = rs.next().get("p");
 			predList.add(p);
@@ -324,7 +324,7 @@ public class ClientManagement {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String p = "http://dbpedia.org/resource/Beijing";
+		String p = "http://dbpedia.org/resource/Hells_Angels";
 //		String ask = "ASK WHERE { ?s <http://dbpedia.org/property/president> <http://dbpedia.org/resource/John_F._Kennedy>}";
 		System.out.println(ClientManagement.getPredicateDate(p.toString()));
 	}
