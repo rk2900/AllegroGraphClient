@@ -267,9 +267,65 @@ public class ClientManagement {
 		return nodeList;
 	}
 	
+	public static LinkedList<RDFNode> getPredicateWho(String entityUri) {
+		LinkedList<RDFNode> predList = new LinkedList<>();
+		
+		// Forward & Backward
+		String fSPO = "<"+entityUri+">" + " ?p ?o.";
+		String bSPO = "?o ?p " + "<"+entityUri+">";
+		
+		String sparql = "SELECT DISTINCT ?p WHERE { "
+				+"{" +fSPO+ "} UNION {" +bSPO+ "}"
+						+ "{?o rdf:type dbo:Person} UNION {?o rdf:type dbo:Organisation}."
+						+ "}";
+		ResultSet rs = ClientManagement.query(sparql, false);
+		while(rs.hasNext()) {
+			RDFNode p = rs.next().get("p");
+			predList.add(p);
+		}
+		return predList;
+	}
+	
+	public static LinkedList<RDFNode> getPredicateWhere(String entityUri) {
+		LinkedList<RDFNode> predList = new LinkedList<>();
+		
+		// Forward & Backward
+		String fSPO = "<"+entityUri+">" + " ?p ?o.";
+		String bSPO = "?o ?p " + "<"+entityUri+">";
+		
+		String sparql = "SELECT DISTINCT ?p WHERE { "
+				+"{" +fSPO+ "} UNION {" +bSPO+ "}"
+						+ "?o rdf:type dbo:Place."
+						+ "}";
+		ResultSet rs = ClientManagement.query(sparql, false);
+		while(rs.hasNext()) {
+			RDFNode p = rs.next().get("p");
+			predList.add(p);
+		}
+		return predList;
+	}
+	
+	public static LinkedList<RDFNode> getPredicateDate(String entityUri) {
+		LinkedList<RDFNode> predList = new LinkedList<>();
+		
+		// Forward & Backward
+		String fSPO = "<"+entityUri+">" + " ?p ?o.";
+		
+		String sparql = "SELECT DISTINCT ?p WHERE { "
+						+fSPO
+						+ "FILTER(datatype(?o) = xsd:date)"
+						+ "}";
+		ResultSet rs = ClientManagement.query(sparql, true);
+		while(rs.hasNext()) {
+			RDFNode p = rs.next().get("p");
+			predList.add(p);
+		}
+		return predList;
+	}
+	
 	public static void main(String[] args) throws Exception {
-		String p = "http://dbpedia.org/ontology/award";
+		String p = "http://dbpedia.org/resource/Beijing";
 //		String ask = "ASK WHERE { ?s <http://dbpedia.org/property/president> <http://dbpedia.org/resource/John_F._Kennedy>}";
-		System.out.println(ClientManagement.getLabel(ClientManagement.getRange(p)));
+		System.out.println(ClientManagement.getPredicateDate(p.toString()));
 	}
 }
