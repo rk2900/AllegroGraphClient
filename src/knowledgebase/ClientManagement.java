@@ -1,5 +1,6 @@
 package knowledgebase;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import com.franz.agraph.jena.AGGraph;
@@ -352,7 +353,22 @@ public class ClientManagement {
 		return predList;
 	}
 	
+	public static HashSet<String> getResourceType(String entityUri) {
+		HashSet<String> typeSet = new HashSet<>();
+		String query = "SELECT ?type WHERE {"
+				+ "<"+entityUri+"> rdf:type ?type."
+				+ "}";
+		ResultSet rs = ClientManagement.query(query, true);
+		while(rs.hasNext()) {
+			RDFNode type = rs.next().get("type");
+			System.err.println(type.toString());
+			typeSet.add(type.toString());
+		}
+		return typeSet;
+	}
+	
 	public static void main(String[] args) throws Exception {
-		
+		String uri = "http://dbpedia.org/resource/Beijing";
+		System.out.println(ClientManagement.getResourceType(uri));
 	}
 }
