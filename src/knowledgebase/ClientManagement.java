@@ -358,10 +358,9 @@ public class ClientManagement {
 		String query = "SELECT ?type WHERE {"
 				+ "<"+entityUri+"> rdf:type ?type."
 				+ "}";
-		ResultSet rs = ClientManagement.query(query, true);
+		ResultSet rs = ClientManagement.query(query, false);
 		while(rs.hasNext()) {
 			RDFNode type = rs.next().get("type");
-			System.err.println(type.toString());
 			typeSet.add(type.toString());
 		}
 		return typeSet;
@@ -369,6 +368,12 @@ public class ClientManagement {
 	
 	public static void main(String[] args) throws Exception {
 		String uri = "http://dbpedia.org/resource/Beijing";
-		System.out.println(ClientManagement.getResourceType(uri));
+		HashSet<String> typeSet = ClientManagement.getResourceType(uri);
+		System.out.println(typeSet);
+		HashSet<String> types = new HashSet<>();
+		types.add("RKkkkkkkkkkk");
+		System.out.println(types.addAll(typeSet));
+		System.out.println(types.addAll(typeSet));
+		System.out.println(types);
 	}
 }
