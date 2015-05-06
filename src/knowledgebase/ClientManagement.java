@@ -15,16 +15,25 @@ import com.franz.agraph.repository.AGRepository;
 import com.franz.agraph.repository.AGRepositoryConnection;
 import com.franz.agraph.repository.AGServer;
 import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class ClientManagement {
+	public enum Server{
+		LOCAL, ONLINE
+	}
+	public static Server serverType = Server.LOCAL; //0: locale 1: online
+	
 	public static final String SERVER_URL = "http://agraph.apexlab.org";
 	public static final String CATALOG_ID = "dbpedia2014";
 	public static final String REPOSITORY_ID = "dbpedia_full";
 	public static final String USERNAME = "dbpedia";
 	public static final String PASSWORD = "apex";
 	public static final String TEMPORARY_DIRECTORY = "";
+	
+	public static final String DBPEDIA_SERVER = "http://dbpedia.org/sparql";
+	
 	
 	static final String RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
 	static final String DBPEDIA_NS = "http://dbpedia.org/resource/";
@@ -85,6 +94,10 @@ public class ClientManagement {
 		return conn;
 	}
 	
+	public static void setServerType(Server s) {
+		serverType = s;
+	}
+	
 	/**
 	 * To execute a specific query.
 	 * @param sparql
@@ -93,17 +106,27 @@ public class ClientManagement {
 	 */
 	public static ResultSet query(String sparql, boolean visible) {
 		ResultSet rs = null;
-		try {
-			getAgModel();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (visible) {
-			System.err.println("\t-"+sparql);
-		}
-		AGQuery query = AGQueryFactory.create(sparql);
-		QueryExecution qe = AGQueryExecutionFactory.create(query, model);
-		rs = qe.execSelect();
+		
+		if(serverType == Server.LOCAL) {
+			try {
+				getAgModel();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (visible) {
+				System.err.println("\t-"+sparql);
+			}
+			AGQuery query = AGQueryFactory.create(sparql);
+			QueryExecution qe = AGQueryExecutionFactory.create(query, model);
+			rs = qe.execSelect();
+		} else if(serverType == Server.ONLINE) {
+			if(DBPEDIA_SERVER != null && DBPEDIA_SERVER.length() > 0) {
+	            QueryExecution qe = QueryExecutionFactory.sparqlService(DBPEDIA_SERVER, sparql);
+	            if(visible)
+	            	System.err.println(sparql);
+	            rs = qe.execSelect();
+	        }
+		} 
 		return rs;
 	}
 	
@@ -367,13 +390,12 @@ public class ClientManagement {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String uri = "http://dbpedia.org/resource/Beijing";
-		HashSet<String> typeSet = ClientManagement.getResourceType(uri);
-		System.out.println(typeSet);
-		HashSet<String> types = new HashSet<>();
-		types.add("RKkkkkkkkkkk");
-		System.out.println(types.addAll(typeSet));
-		System.out.println(types.addAll(typeSet));
-		System.out.println(types);
+		String query = "SELECT ?s WHERE {?s ?p ?o.} LIMIT 5";
+		ClientManagement.setServerType(Server.ONLINE);
+        ResultSet rs = ClientManagement.query(query, true);
+        while(rs.hasNext()) {
+         	RDFNode s = rs.next().get("s");
+           	System.out.println(s);
+        }
 	}
 }
