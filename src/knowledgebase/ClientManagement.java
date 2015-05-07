@@ -314,7 +314,8 @@ public class ClientManagement {
 		LinkedList<RDFNode> nodeList = new LinkedList<>();
 		String query = "SELECT ?node WHERE { "
 				+ "<"+leftNode+"> ?p1 ?node. "
-				+ "<"+rightNode+"> ?p2 ?node. }";
+				+ "<"+rightNode+"> ?p2 ?node. "
+						+ "}";
 		ResultSet rs = ClientManagement.query(query, false);
 		while(rs.hasNext()) {
 			RDFNode node = rs.next().get("node");
