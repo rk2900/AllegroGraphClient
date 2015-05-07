@@ -156,17 +156,31 @@ public class ClientManagement {
 		ClientManagement.model.close();
 	}
 	
+	public static RDFNode getEntityRedirectUri(RDFNode node) {
+		RDFNode rtn = node;
+		String queryString = "SELECT ?o WHERE {"
+				+ "<"+node.toString()+"> dbo:wikiPageRedirects ?o."
+				+ "}";
+		ResultSet rs = query(queryString, false);
+		if (rs.hasNext()) {
+			RDFNode redirectNode = rs.next().get("o");
+			rtn = redirectNode;
+		}
+		return rtn;
+	}
+	
 	public static RDFNode getEntityOfWiki(String wikiUrl) {
 		RDFNode node = null;
-			String queryString = "SELECT ?s ?p  WHERE {"
-					+ "?s ?p <" + wikiUrl + ">.} LIMIT 1";
-			ResultSet results = query(queryString, false);
-			while (results.hasNext()) {
-				QuerySolution result = results.next();
-				RDFNode s = result.get("s");
-				node = s;
-				break;
-			}
+		
+		String queryString = "SELECT ?s ?p  WHERE {"
+				+ "?s ?p <" + wikiUrl + ">."
+						+ "} LIMIT 1";
+		ResultSet results = query(queryString, false);
+		if (results.hasNext()) {
+			QuerySolution result = results.next();
+			RDFNode s = result.get("s");
+			node = getEntityRedirectUri(s);
+		}
 		return node;
 	}
 	
