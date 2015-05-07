@@ -12,8 +12,9 @@ public class BlackList {
 		predicateSet.add("http://dbpedia.org/ontology/wikiPageRevisionID");
 		predicateSet.add("http://dbpedia.org/ontology/thumbnail");
 		predicateSet.add("http://dbpedia.org/ontology/abstract");
-//		predicateSet.add("http://dbpedia.org/ontology/");
-//		predicateSet.add("http://dbpedia.org/ontology/");
+		predicateSet.add("http://dbpedia.org/ontology/wikiPageRedirects");
+		predicateSet.add("http://dbpedia.org/ontology/wikiPageRevisionID");
+		
 		predicateSet.add("http://dbpedia.org/property/hasPhotoCollection");
 		predicateSet.add("http://dbpedia.org/property/id");
 		predicateSet.add("http://dbpedia.org/property/imageCaption");
@@ -22,11 +23,6 @@ public class BlackList {
 		predicateSet.add("http://dbpedia.org/property/imageShield");
 		predicateSet.add("http://dbpedia.org/property/imageSkyline");
 		predicateSet.add("http://dbpedia.org/property/link");
-//		predicateSet.add("http://dbpedia.org/property/id");
-//		predicateSet.add("http://dbpedia.org/property/id");
-//		predicateSet.add("http://dbpedia.org/property/id");
-//		predicateSet.add("http://dbpedia.org/property/id");
-//		predicateSet.add("http://dbpedia.org/property/id");
 		
 	}
 	
