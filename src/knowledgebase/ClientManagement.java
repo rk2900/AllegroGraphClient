@@ -16,6 +16,7 @@ import com.franz.agraph.repository.AGRepositoryConnection;
 import com.franz.agraph.repository.AGServer;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
@@ -153,6 +154,20 @@ public class ClientManagement {
 	public static void clearAll() {
 		closeAllConnections();
 		ClientManagement.model.close();
+	}
+	
+	public static RDFNode getEntityOfWiki(String wikiUrl) {
+		RDFNode node = null;
+			String queryString = "SELECT ?s ?p  WHERE {"
+					+ "?s ?p <" + wikiUrl + ">.} LIMIT 1";
+			ResultSet results = query(queryString, false);
+			while (results.hasNext()) {
+				QuerySolution result = results.next();
+				RDFNode s = result.get("s");
+				node = s;
+				break;
+			}
+		return node;
 	}
 	
 	public static LinkedList<RDFNode> getSurroundingPred(String entityUri) {
