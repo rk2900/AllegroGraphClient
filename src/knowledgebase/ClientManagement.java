@@ -197,7 +197,8 @@ public class ClientManagement {
 		ResultSet rs = ClientManagement.query(sparql, false);
 		while(rs.hasNext()) {
 			RDFNode p = rs.next().get("p");
-			predList.add(p);
+			if(!BlackList.predicateSet.contains(p.toString()))
+				predList.add(p);
 		}
 		
 		return predList;
@@ -336,7 +337,8 @@ public class ClientManagement {
 		ResultSet rs = ClientManagement.query(sparql, false);
 		while(rs.hasNext()) {
 			RDFNode p = rs.next().get("p");
-			predList.add(p);
+			if(!BlackList.predicateSet.contains(p.toString()))
+				predList.add(p);
 		}
 		return predList;
 	}
@@ -355,7 +357,8 @@ public class ClientManagement {
 		ResultSet rs = ClientManagement.query(sparql, false);
 		while(rs.hasNext()) {
 			RDFNode p = rs.next().get("p");
-			predList.add(p);
+			if(!BlackList.predicateSet.contains(p.toString()))
+				predList.add(p);
 		}
 		return predList;
 	}
@@ -373,7 +376,8 @@ public class ClientManagement {
 		ResultSet rs = ClientManagement.query(sparql, false);
 		while(rs.hasNext()) {
 			RDFNode p = rs.next().get("p");
-			predList.add(p);
+			if(!BlackList.predicateSet.contains(p.toString()))
+				predList.add(p);
 		}
 		return predList;
 	}
@@ -398,7 +402,8 @@ public class ClientManagement {
 		ResultSet rs = ClientManagement.query(sparql, true);
 		while(rs.hasNext()) {
 			RDFNode p = rs.next().get("p");
-			predList.add(p);
+			if(!BlackList.predicateSet.contains(p.toString()))
+				predList.add(p);
 		}
 		
 		
